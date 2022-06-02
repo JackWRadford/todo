@@ -1,31 +1,16 @@
-import 'package:flutter/material.dart';
+class Todo {
+  String id;
+  bool done;
+  var text = '';
 
-class Todo with ChangeNotifier {
-  var id = '';
-  var _text = '';
-  var _done = false;
-
-  Todo(this._text);
-
-  String get text => _text;
-  bool get done => _done;
-
-  set text(String value) {
-    _text = value;
-    notifyListeners();
-  }
-
-  set done(bool value) {
-    _done = value;
-    notifyListeners();
-  }
+  Todo(this.text, [this.id = '', this.done = false]);
 
   Map<String, dynamic> toJson() => {
-        'text': _text,
-        'done': _done,
+        'text': text,
+        'done': done,
       };
 
   Todo.fromJson(this.id, dynamic data)
-      : _text = data['text'],
-        _done = data['done'];
+      : text = data['text'],
+        done = data['done'];
 }

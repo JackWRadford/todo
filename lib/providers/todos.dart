@@ -18,6 +18,9 @@ class Todos with ChangeNotifier {
 
   /// Fetch all Todos
   Future<void> fetchTodos() async {
+    if (kDebugMode) {
+      print('CALLED SERVER: fetchTodos()');
+    }
     final url = Uri.parse('$_baseUrl/todos.json');
     try {
       final response = await http.get(url);
@@ -35,6 +38,9 @@ class Todos with ChangeNotifier {
 
   /// Add new Todo
   Future<void> addTodo(String text) async {
+    if (kDebugMode) {
+      print('CALLED SERVER: addTodo()');
+    }
     final url = Uri.parse('$_baseUrl/todos.json');
     try {
       final response =
@@ -50,7 +56,19 @@ class Todos with ChangeNotifier {
 
   /// Update a Todo
   Future<void> updateTodo(Todo todo) async {
-    notifyListeners();
+    if (kDebugMode) {
+      print('CALLED SERVER: updateTodo()');
+    }
+    final todoIndex = _todoList.indexWhere((t) => t.id == todo.id);
+    if (todoIndex < 0) return;
+    final url = Uri.parse('$_baseUrl/todos/${todo.id}.json');
+    try {
+      await http.patch(url, body: jsonEncode(todo.toJson()));
+      _todoList[todoIndex] = todo;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Delete a Todo

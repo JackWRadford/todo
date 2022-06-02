@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/models/todo.dart';
+import 'package:todo/widgets/todo_done_btn.dart';
 
 class TodoListItem extends StatelessWidget {
   final Todo todo;
@@ -17,20 +18,15 @@ class TodoListItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              todo.text,
-              style: TextStyle(
-                color: (todo.done) ? CupertinoColors.systemGrey : null,
+            Flexible(
+              child: Text(
+                todo.text,
+                style: TextStyle(
+                  color: (todo.done) ? CupertinoColors.systemGrey : null,
+                ),
               ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                (todo.done)
-                    ? CupertinoIcons.checkmark_alt
-                    : CupertinoIcons.circle,
-              ),
-            )
+            TodoDoneBtn(todo: todo),
           ],
         ),
       ),
