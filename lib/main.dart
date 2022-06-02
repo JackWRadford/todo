@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/providers/todo_provider.dart';
+import 'package:todo/providers/todos.dart';
 import 'package:todo/widgets/add_edit_todo_dialog.dart';
+import 'package:todo/widgets/todo_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +14,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TodoProvider>(
-      create: ((_) => TodoProvider()),
+    return ChangeNotifierProvider<Todos>(
+      create: ((_) => Todos()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -34,6 +35,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    setState(() => _isLoading = true);
+    Provider.of<Todos>(context, listen: false)
+        .fetchTodos()
+        .then((_) => setState(() => _isLoading = false));
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (_) => const AddEditTodoDialog(),
             );
           }),
-      body: ListView(
-        children: [],
-      ),
+      body: (!_isLoading)
+          ? const TodoList()
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }

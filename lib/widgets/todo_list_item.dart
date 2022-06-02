@@ -9,23 +9,30 @@ class TodoListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Row(
-        children: [
-          Text(
-            todo.text,
-            style: TextStyle(
-              color: (todo.done) ? CupertinoColors.systemGrey : null,
+      margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              todo.text,
+              style: TextStyle(
+                color: (todo.done) ? CupertinoColors.systemGrey : null,
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              (todo.done)
-                  ? CupertinoIcons.checkmark_alt
-                  : CupertinoIcons.circle,
-            ),
-          )
-        ],
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                (todo.done)
+                    ? CupertinoIcons.checkmark_alt
+                    : CupertinoIcons.circle,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
