@@ -19,6 +19,7 @@ class _AddEditTodoDialogState extends State<AddEditTodoDialog> {
   final _textController = TextEditingController();
 
   var _isLoading = false;
+  var _isLoadingDelete = false;
 
   @override
   void initState() {
@@ -27,13 +28,13 @@ class _AddEditTodoDialogState extends State<AddEditTodoDialog> {
   }
 
   /// Either adds or updates a Todo
-  Future<void> submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
       if (widget.todo != null) {
-        await Provider.of<Todos>(context, listen: false)
-            .updateTodo(widget.todo!);
+        await Provider.of<Todos>(context, listen: false).updateTodo(
+            Todo(_textController.text, widget.todo!.id, widget.todo!.done));
       } else {
         await Provider.of<Todos>(context, listen: false)
             .addTodo(_textController.text);
@@ -47,14 +48,29 @@ class _AddEditTodoDialogState extends State<AddEditTodoDialog> {
     Navigator.of(context).pop();
   }
 
+  /// Delete todo
+  Future<void> _delete() async {
+    setState(() => _isLoadingDelete = true);
+    try {
+      await Provider.of<Todos>(context, listen: false)
+          .deleteTodo(widget.todo!.id);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Something went wrong')),
+      );
+    }
+    setState(() => _isLoadingDelete = false);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      title: const Text(
-        'New Todo',
+      title: Text(
+        (widget.todo != null) ? 'Update Todo' : 'New Todo',
         textAlign: TextAlign.center,
       ),
       content: SizedBox(
@@ -78,23 +94,54 @@ class _AddEditTodoDialogState extends State<AddEditTodoDialog> {
               ),
             ),
             const SizedBox(height: 30),
-            // Submit button
-            ElevatedButton(
-              onPressed: submit,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: (!_isLoading)
-                    ? Text((widget.todo != null) ? 'Update' : 'Add')
-                    : const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              CupertinoColors.white),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Delete button
+                (widget.todo != null)
+                    ? Expanded(
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  CupertinoColors.destructiveRed)),
+                          onPressed: _delete,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: (!_isLoadingDelete)
+                                ? const Text('Delete')
+                                : const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          CupertinoColors.white),
+                                    ),
+                                  ),
+                          ),
                         ),
-                      ),
-              ),
+                      )
+                    : Container(),
+                SizedBox(width: (widget.todo != null) ? 10 : 0),
+                // Submit button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: (!_isLoading)
+                          ? Text((widget.todo != null) ? 'Update' : 'Add')
+                          : const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    CupertinoColors.white),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

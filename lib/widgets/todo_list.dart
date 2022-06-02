@@ -16,6 +16,7 @@ class TodoList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => _refresh(context),
       child: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 100, top: 10),
         itemCount: todosProvider.todoList.length,
         itemBuilder: (_, i) => TodoListItem(todo: todosProvider.todoList[i]),
       ),

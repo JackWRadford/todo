@@ -75,5 +75,18 @@ class Todos with ChangeNotifier {
   }
 
   /// Delete a Todo
-  Future<void> deleteTodo(int id) async {}
+  Future<void> deleteTodo(String id) async {
+    if (kDebugMode) {
+      print('CALLED SERVER: deleteTodo()');
+    }
+    final url = Uri.parse('$_baseUrl/todos/$id.json');
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode >= 400) throw Error();
+      _todoList.removeWhere((t) => t.id == id);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
