@@ -24,6 +24,7 @@ class Todos with ChangeNotifier {
     final url = Uri.parse('$_baseUrl/todos.json');
     try {
       final response = await http.get(url);
+      if (response.statusCode >= 400) throw Error();
       final todoData = json.decode(response.body) as Map<String, dynamic>;
       final todos = <Todo>[];
       todoData.forEach((todoId, todoData) {
@@ -45,6 +46,7 @@ class Todos with ChangeNotifier {
     try {
       final response =
           await http.post(url, body: jsonEncode(Todo(text).toJson()));
+      if (response.statusCode >= 400) throw Error();
       final todo = Todo(text);
       todo.id = jsonDecode(response.body)['name'];
       _todoList.add(todo);
@@ -63,7 +65,8 @@ class Todos with ChangeNotifier {
     if (todoIndex < 0) return;
     final url = Uri.parse('$_baseUrl/todos/${todo.id}.json');
     try {
-      await http.patch(url, body: jsonEncode(todo.toJson()));
+      var response = await http.patch(url, body: jsonEncode(todo.toJson()));
+      if (response.statusCode >= 400) throw Error();
       _todoList[todoIndex] = todo;
       notifyListeners();
     } catch (e) {
@@ -72,7 +75,5 @@ class Todos with ChangeNotifier {
   }
 
   /// Delete a Todo
-  Future<void> deleteTodo(int id) async {
-    notifyListeners();
-  }
+  Future<void> deleteTodo(int id) async {}
 }
