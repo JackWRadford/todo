@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:todo/models/todo.dart';
+import 'package:todo/hide_me.dart';
 import 'package:http/http.dart' as http;
 
 class TodoProvider extends ChangeNotifier {
@@ -9,8 +10,7 @@ class TodoProvider extends ChangeNotifier {
   var todoList = <Todo>[];
 
   /// Firebase base URL
-  static const _baseUrl =
-      'https://todo-api-practice-default-rtdb.europe-west1.firebasedatabase.app/';
+  static const _baseUrl = baseUrl;
 
   /// Add new Todo
   Future<void> addTodo(String text) async {
